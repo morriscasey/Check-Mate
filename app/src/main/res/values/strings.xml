@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Check Mate</string>
+    <string name="title_home">Home</string>
+    <string name="check_in">Check In</string>
+    <string name="setup">Setup</string>
+
+    <string-array name="users_array">
+        <item>Bob</item>
+        <item>Mary</item>
+    </string-array>
+</resources>
