@@ -38,7 +38,7 @@ public class CheckInFragment extends Fragment {
     Location mCurrentLocation;
     CountdownTask mCountdownTask;
     Timer mTimer;
-    public boolean mIsCanceled;
+    public boolean mCheckedIn = false;
 
     @Nullable
     @Override
@@ -48,7 +48,7 @@ public class CheckInFragment extends Fragment {
         sec = (TextView)view.findViewById(R.id.seconds);
 
         sec.setText(Integer.toString(10));
-        mIsCanceled = false;
+
 
         if(mainActivity.mUser == "bob"){
             mUser = "Mary";
@@ -61,10 +61,8 @@ public class CheckInFragment extends Fragment {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCountdownTask.cancel(true);
-                mTimer.cancel();
-                repeat();
-                sec.setText(Integer.toString(10));
+                mCheckedIn = true;
+                mSendButton.setEnabled(false);
 
             }
         });
@@ -92,8 +90,13 @@ public class CheckInFragment extends Fragment {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
+            if(mCheckedIn == true){
+                sendLocation(true);
+                mSendButton.setEnabled(true);
+            }else{
+                sendLocation(false);
+            }
 
-            sendLocation();
             Log.i("TAG", countDown.toString());
 
         }
@@ -115,7 +118,7 @@ public class CheckInFragment extends Fragment {
 
 
     // Grab GPS Location
-    public void sendLocation(){
+    public void sendLocation(final boolean isClicked){
         Log.i("TAG", "Clicked");
 
         if(!mFakeLocations.mLocationsStack.isEmpty()){
@@ -146,6 +149,7 @@ public class CheckInFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams(){
                     Map<String, String> params = new HashMap<String,String>();
+                    params.put("isClicked", isClicked+"");
                     params.put("lat", mCurrentLocation.latitude + "");
                     params.put("long", mCurrentLocation.latitude + "");
                     return params;
@@ -178,5 +182,4 @@ public class CheckInFragment extends Fragment {
         }, 0, 10000);
     }
 
-    // Send location to emergency contacts if button not pressed
 }
